@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Article Detail - CMS Editorial</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;family=Epilogue:wght@300..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3c7c65",
+                        "background-light": "#f8f8f8",
+                        "background-dark": "#1a1b1e",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                        "serif": ["Epilogue", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .article-content p { margin-bottom: 2rem; line-height: 1.8; font-size: 1.125rem; color: #333; }
+        .article-content h2 { font-family: 'Epilogue', sans-serif; font-weight: 700; font-size: 2rem; margin-top: 3rem; margin-bottom: 1.5rem; color: #131615; }
+        .dark .article-content p { color: #d1d5db; }
+        .dark .article-content h2 { color: #f9fafb; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#131615] dark:text-gray-100 transition-colors duration-300">
+<!-- Sticky Navigation with Progress -->
+<header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
+<div class="max-w-screen-xl mx-auto px-6 lg:px-20 h-16 flex items-center justify-between">
+<div class="flex items-center gap-6">
+<a class="flex items-center gap-2 group" href="#">
+<span class="material-symbols-outlined text-primary group-hover:-translate-x-1 transition-transform">arrow_back</span>
+<span class="text-sm font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 group-hover:text-primary transition-colors">Back to feed</span>
+</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="bg-primary text-white px-5 py-2 text-sm font-bold rounded-lg hover:bg-[#2d5d4c] transition-colors">
+                    Subscribe
+                </button>
+</div>
+</div>
+<!-- Progress Bar Component (Customized) -->
+<div class="w-full bg-gray-200 dark:bg-gray-800 h-[2px]">
+<div class="bg-primary h-full transition-all duration-300" style="width: 45%;"></div>
+</div>
+</header>
+<main class="max-w-4xl mx-auto px-6 py-12 lg:py-24">
+<!-- PageHeading Component Style -->
+<div class="mb-12">
+<div class="flex flex-col gap-6">
+<div class="inline-flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest">
+<span class="w-8 h-[1px] bg-primary"></span>
+                    Design Systems
+                </div>
+<h1 class="font-serif text-5xl md:text-7xl font-extrabold leading-[1.1] tracking-tight text-[#131615] dark:text-white">
+                    The Future of Minimalist Design in Modern Architecture
+                </h1>
+<p class="text-xl md:text-2xl text-gray-500 dark:text-gray-400 font-light leading-relaxed max-w-2xl">
+                    Exploring how simplicity and functionality are redefining our urban landscapes through a lens of sustainability and purpose.
+                </p>
+</div>
+</div>
+<!-- ProfileHeader Component Style -->
+<div class="flex items-center justify-between py-8 border-y border-gray-100 dark:border-gray-800 mb-16">
+<div class="flex items-center gap-4">
+<div class="size-14 rounded-full bg-cover bg-center border-2 border-primary/20 p-0.5" data-alt="Close up portrait of Elena Rodriguez" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuANyB9NAuneJTreag2lZGx9rcDtZdXsRmZWyGSjP-eCUmJm46fDsTVhFFhl50dwQHgB3R39719eMFoL6BR8B1nDaFqwXiGAv_1XVKoj1XZXs6rARreA6nNq7fjfWfp10hzQ3es_cyg3Ai_qcl84S2hOzGfSPYCnGNQz-UKJz6Xf3RAS2xix1sN5WtjuQtMANx9P3lOi767pS0vk6r8Be5Z-eqesg0m9-ZANT5D7Xhd5HxhD6PsLzGM-VcM_6NHEGJUTrkl_16HfE5k");'>
+</div>
+<div>
+<p class="text-lg font-bold text-[#131615] dark:text-white">Elena Rodriguez</p>
+<p class="text-sm text-gray-500 dark:text-gray-400">Oct 12, 2023 · 8 min read</p>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-sm font-bold rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-all">Follow</button>
+<button class="p-2 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all">
+<span class="material-symbols-outlined text-gray-600 dark:text-gray-400">bookmark</span>
+</button>
+</div>
+</div>
+<!-- Content Column -->
+<article class="article-content max-w-[720px] mx-auto">
+<!-- Images Component Style -->
+<div class="relative -mx-6 lg:-mx-20 mb-12">
+<div class="aspect-[16/9] overflow-hidden rounded-xl shadow-2xl">
+<div class="w-full h-full bg-cover bg-center" data-alt="Modern concrete architecture with clean lines and shadow play" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC_e5Kl8IjjrIr3xRZty0Sa-JTFRGXdWrX4NwoO1dekwzcgiJhiyU-X_drgadhCdKuqloN-muxEsNR2Pa0uY9X6973HNIoQX5XJZBD4L48XOCLtS7qgbfRmOTr4KZPRjirDMN18_HqtLPtgxyJEzVs90Iwgrbpqe3RLpMSObmsnibC0zcEyZhOldQo5LyYuc4Z0Ul0yRkcvbPA7Am_Y1OwDkCflEp6Q7CmZ5oX54BcCWktWikzT00NB0wGftMGlLt0kUNYiWLnyBns");'>
+</div>
+</div>
+<p class="mt-4 text-sm text-gray-500 italic text-center">Modernist structures often rely on the interplay of light and raw materials. Photo by ArchVisuals.</p>
+</div>
+<p class="text-xl font-medium leading-relaxed mb-10 text-gray-800 dark:text-gray-200">
+                Minimalism is not merely the absence of clutter; it is the presence of intention. In the context of modern architecture, this philosophy has shifted from a stylistic choice to a functional necessity in our rapidly urbanizing world.
+            </p>
+<p>
+                As we look toward the cities of tomorrow, architects are increasingly turning away from ornamental excess. Instead, they are embracing the "Less is More" mantra coined by Ludwig Mies van der Rohe, but with a contemporary twist that emphasizes emotional well-being and ecological footprint.
+            </p>
+<div class="my-16 border-l-4 border-primary pl-8 py-2">
+<span class="font-serif text-3xl font-light italic leading-snug text-gray-700 dark:text-gray-300">
+                    "Design is not just what it looks like and feels like. Design is how it works, and for modern spaces, that means stripping away the ego of the architect."
+                </span>
+<p class="mt-4 text-sm font-bold uppercase tracking-widest text-primary">— Marcus Thorne, Lead Architect</p>
+</div>
+<h2>The Rise of Sustainable Simplicity</h2>
+<p>
+                One of the most compelling aspects of the new minimalist movement is its inherent link to sustainability. By reducing the number of materials used and focusing on the raw beauty of concrete, wood, and glass, modern buildings can achieve a lower carbon footprint while creating spaces that feel timeless.
+            </p>
+<p>
+                Functionality remains at the core. Every beam, every window placement, and every void in the structure serves a specific purpose—whether it's maximizing natural cross-ventilation or optimizing the path of sunlight during winter months.
+            </p>
+<!-- Image breaking the grid -->
+<div class="grid grid-cols-1 md:grid-cols-5 gap-8 my-16 items-center">
+<div class="md:col-span-3 aspect-[4/3] rounded-lg overflow-hidden" data-alt="Close up of sustainable building materials: wood and slate" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA9kvsdJkRZKjFlIM0lac89BYWrAlyPbyf1u6ixCG5iag7YFwavllRemjqsnUxae8yEkI_xJLQTJD1N5hl45seQ2OyUNh7TZs6VfNG3LVo5y6oMAu4cf47seyS8FfuRlPA-D-OTalW9kFTGn4sz48wjFXgy6wNWU2zWfASNzdBICxicHA05X3zp5rybGRYl1R7WIBOyS9t7wsmzQM44Z0OV_Bxohhi_ahBnewGgrye6wOaYfB6PEIJebMPdn4cqmeTn0xkLhAIMzOA");'>
+</div>
+<div class="md:col-span-2">
+<p class="text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+                        Texture becomes the primary ornament. When we remove color and complexity, the tactile quality of materials like reclaimed cedar or polished basalt takes center stage.
+                    </p>
+</div>
+</div>
+<p>
+                In conclusion, the future of minimalist architecture isn't about creating cold, sterile environments. It's about crafting stages for human life to unfold without the distraction of unnecessary visual noise. It is architecture as a background for existence.
+            </p>
+<!-- Shared Footer Actions -->
+<div class="mt-20 pt-10 border-t border-gray-100 dark:border-gray-800 flex flex-wrap gap-4 items-center justify-between">
+<div class="flex gap-2">
+<button class="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary font-bold rounded-lg hover:bg-primary/20 transition-all">
+<span class="material-symbols-outlined text-lg">share</span>
+                        Share Article
+                    </button>
+<button class="p-2 text-gray-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+</div>
+<div class="flex gap-1">
+<span class="text-xs font-bold uppercase tracking-tighter text-gray-400 mr-2">Tagged in:</span>
+<a class="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-sm text-gray-600 dark:text-gray-300 hover:bg-primary hover:text-white transition-colors" href="#">Architecture</a>
+<a class="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-sm text-gray-600 dark:text-gray-300 hover:bg-primary hover:text-white transition-colors" href="#">Minimalism</a>
+</div>
+</div>
+</article>
+<!-- Read Next Bento-Box -->
+<section class="mt-24 border-t-4 border-primary/20 pt-12">
+<h3 class="font-serif text-3xl font-bold mb-8">Continue Reading</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Related Article 1 -->
+<a class="group block bg-white dark:bg-[#25262b] p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all" href="#">
+<div class="aspect-video mb-4 rounded-lg overflow-hidden">
+<div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-500" data-alt="Abstract interior with soft morning light" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAdkGS-U6iTIFjuXQmjkpoFHAnplKCN8JNbP3JfhQO3tR6kgSeutp6U4qR9dGHRJXXjDrRz5zxDfPl0Yo1hd1XDQLULDQATNSXPNKVuf83Jve_wWwqjTE5tI5Dgh8dzKrabcOZbjVSGLG6OlprHS4eRM78O1vHIDcPvyvfMz3k0qWb5goRt6StW0SsSg1ydcVvY_NcNt4ikb57BXaJTmw3MfLAa1RD5_WxVc9ZuiR7d7yVlYkOizeJCGKZGmzVMeXTwO7O42feqHz8");'>
+</div>
+</div>
+<span class="text-primary text-[10px] font-bold uppercase tracking-widest mb-2 block">Interior Design</span>
+<h4 class="font-serif text-xl font-bold group-hover:text-primary transition-colors mb-2">Finding Quiet in the Home Office</h4>
+<p class="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">How to create a workspace that fosters deep focus through minimalist principles.</p>
+<div class="mt-4 flex items-center gap-2 text-xs text-gray-400">
+<span class="material-symbols-outlined text-sm">schedule</span>
+                        5 min read
+                    </div>
+</a>
+<!-- Related Article 2 -->
+<a class="group block bg-white dark:bg-[#25262b] p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all" href="#">
+<div class="aspect-video mb-4 rounded-lg overflow-hidden">
+<div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-500" data-alt="Top down view of a team working on architectural plans" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDjRCPNS5C8HbM2Xfes20zrDjNbTWecxx3JJuSLAVT7gHr8_aG0sXjYdT364s91T-jkXPlwnnPAaIogrIH9STGfOpPtl7U5014upfmYa_SwrS9Vuckjuuf3l-LJZ8zqTOZyld8GvaGB9dsSx7chN7oW4qfAh6C_JHHEIZGwzx_jQvfzLZ9SfCFUauTGQBIMEtcA4rPAGGAbxYaBNx9gonMtDc3jVZYhkwo9FJiRTyCC8xgMMH-Vab1YlR7ij559s59JbLMaLTpR5EU");'>
+</div>
+</div>
+<span class="text-primary text-[10px] font-bold uppercase tracking-widest mb-2 block">Workflow</span>
+<h4 class="font-serif text-xl font-bold group-hover:text-primary transition-colors mb-2">Editorial Workflows for Scale</h4>
+<p class="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">The systems and tools used by top-tier architecture firms to manage content delivery.</p>
+<div class="mt-4 flex items-center gap-2 text-xs text-gray-400">
+<span class="material-symbols-outlined text-sm">schedule</span>
+                        12 min read
+                    </div>
+</a>
+</div>
+</section>
+</main>
+<footer class="mt-24 bg-gray-100 dark:bg-background-dark py-16 border-t border-gray-200 dark:border-gray-800">
+<div class="max-w-screen-xl mx-auto px-6 text-center">
+<div class="flex items-center justify-center gap-2 mb-6">
+<div class="size-6 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.8261 17.4264C16.7203 18.1174 20.2244 18.5217 24 18.5217C27.7756 18.5217 31.2797 18.1174 34.1739 17.4264C36.9144 16.7722 39.9967 15.2331 41.3563 14.1648L24.8486 40.6391C24.4571 41.267 23.5429 41.267 23.1514 40.6391L6.64374 14.1648C8.00331 15.2331 11.0856 16.7722 13.8261 17.4264Z" fill="currentColor"></path>
+</svg>
+</div>
+<span class="text-lg font-bold tracking-tighter">CMS Editorial</span>
+</div>
+<p class="text-sm text-gray-500 dark:text-gray-400 max-w-md mx-auto">
+                A premium multi-tenant publication platform designed for the modern writer. 
+                Focus on the story, we'll handle the rest.
+            </p>
+<div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-800 text-xs text-gray-400 uppercase tracking-widest">
+                © 2023 CMS Editorial. All rights reserved.
+            </div>
+</div>
+</footer>
+</body></html>
