@@ -10,6 +10,7 @@ import LandingPage from '../pages/public/LandingPage'
 import BlogHomePage from '../pages/public/BlogHomePage'
 import ArticleDetailPage from '../pages/public/ArticleDetailPage'
 import AuthorProfilePage from '../pages/public/AuthorProfilePage'
+import LoginPage from '../pages/auth/LoginPage'
 
 // Dashboard Pages
 import DashboardPage from '../pages/dashboard/DashboardPage'
@@ -28,6 +29,7 @@ function AppRoutes() {
                 <Route path="blog" element={<BlogHomePage />} />
                 <Route path="blog/:slug" element={<ArticleDetailPage />} />
                 <Route path="author/:authorId" element={<AuthorProfilePage />} />
+                <Route path="login" element={<LoginPage />} />
             </Route>
 
             {/* Dashboard Routes */}
