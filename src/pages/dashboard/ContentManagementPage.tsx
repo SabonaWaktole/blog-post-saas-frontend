@@ -245,13 +245,15 @@ function ContentManagementPage() {
                                         <td className="px-4 lg:px-6 py-5 hidden md:table-cell">
                                             <div className="flex items-center gap-2">
                                                 <div className="size-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary overflow-hidden">
-                                                    {post.author.avatar ? (
+                                                    {post.author?.avatar ? (
                                                         <img src={post.author.avatar} alt={post.author.name} className="w-full h-full object-cover" />
                                                     ) : (
-                                                        getInitials(post.author.name)
+                                                        post.author?.name ? getInitials(post.author.name) : '?'
                                                     )}
                                                 </div>
-                                                <span className="text-sm font-medium text-charcoal dark:text-gray-200">{post.author.name}</span>
+                                                <span className="text-sm font-medium text-charcoal dark:text-gray-200">
+                                                    {post.author?.name || 'Unknown Author'}
+                                                </span>
                                             </div>
                                         </td>
                                         <td className="px-4 lg:px-6 py-5 text-sm text-muted-gray hidden lg:table-cell whitespace-nowrap">{post.date}</td>

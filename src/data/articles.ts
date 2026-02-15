@@ -22,6 +22,9 @@ export interface Article {
     image: string | null
     status: ArticleStatus
     tags: string[]
+    coverImageUrl?: string
+    seoTitle?: string
+    seoDescription?: string
 }
 
 // --- Public Access ---
@@ -143,9 +146,10 @@ export const createPost = async (blogId: string, data: Partial<Article>): Promis
     }
 }
 
-export const updatePost = async (blogId: string, postId: string, data: Partial<Article>): Promise<Article> => {
+export const updatePost = async (postId: string, data: Partial<Article>): Promise<Article> => {
     try {
-        const response = await apiClient.put<Article>(`/blogs/${blogId}/posts/${postId}`, data);
+        // Backend route is PUT /api/v1/posts/:id
+        const response = await apiClient.put<Article>(`/posts/${postId}`, data);
         return response;
     } catch (error) {
         console.error('Failed to update post:', error);

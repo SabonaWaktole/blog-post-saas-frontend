@@ -15,6 +15,7 @@ export default function EditorPage() {
 
     const [post, setPost] = useState<Partial<Article>>({
         title: '',
+        slug: '', // Add slug to state
         content: '',
         excerpt: '',
         status: 'DRAFT',
@@ -22,6 +23,32 @@ export default function EditorPage() {
         tags: []
     })
     const [categories, setCategories] = useState<Category[]>([])
+
+    // Slugify helper
+    const slugify = (text: string) => {
+        return text
+            .toString()
+            .toLowerCase()
+            .trim()
+            .replace(/\s+/g, '-')     // Replace spaces with -
+            .replace(/[^\w\-]+/g, '') // Remove all non-word chars
+            .replace(/\-\-+/g, '-')   // Replace multiple - with single -
+    }
+
+    // Auto-update slug when title changes
+    const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newTitle = e.target.value
+        setPost(prev => {
+            const currentSlug = prev.slug || ''
+            const expectedSlug = slugify(prev.title || '')
+
+            // If the slug was auto-generated from the old title (or empty), update it
+            if (currentSlug === expectedSlug || currentSlug === '') {
+                return { ...prev, title: newTitle, slug: slugify(newTitle) }
+            }
+            return { ...prev, title: newTitle }
+        })
+    }
 
     useEffect(() => {
         const init = async () => {
@@ -60,17 +87,44 @@ export default function EditorPage() {
 
     const handleSave = async (status: 'DRAFT' | 'PUBLISHED' = 'DRAFT') => {
         if (!currentBlog) return
+
+        // Validate
+        if (!post.title) {
+            alert('Title is required')
+            return
+        }
+
+        const finalSlug = post.slug || slugify(post.title)
+
         setIsSaving(true)
         try {
-            const dataToSave = { ...post, status }
+            // Construct a clean payload with only allowed fields
+            // Zod strict validation might fail if we send extra fields like 'author', 'date' etc.
+            const dataToSave = {
+                title: post.title,
+                content: post.content,
+                excerpt: post.excerpt,
+                slug: finalSlug,
+                status,
+                featured: post.featured,
+                coverImageUrl: post.coverImageUrl,
+                seoTitle: post.seoTitle,
+                seoDescription: post.seoDescription,
+                // Map frontend 'category' (single ID) to backend 'categoryIds' (array)
+                categoryIds: post.category ? [post.category] : [],
+                tagIds: post.tags,
+            }
+
             if (postId) {
-                await updatePost(currentBlog.id, postId, dataToSave)
+                // Remove blogId from updatePost call
+                await updatePost(postId, dataToSave)
             } else {
                 await createPost(currentBlog.id, dataToSave)
             }
             navigate('/dashboard/posts')
         } catch (error) {
             console.error('Failed to save post:', error)
+            alert('Failed to save post. Please check the console for details.')
         } finally {
             setIsSaving(false)
         }
@@ -127,8 +181,22 @@ export default function EditorPage() {
                             placeholder="Post Title"
                             className="w-full text-3xl font-bold border-none placeholder-gray-400 focus:ring-0 bg-transparent dark:text-white px-0"
                             value={post.title}
-                            onChange={(e) => setPost({ ...post, title: e.target.value })}
+                            onChange={handleTitleChange}
                         />
+
+                        {/* Optional: URL/Slug display */}
+                        <div className="flex items-center text-sm text-gray-500 mt-2">
+                            <span className="mr-1">URL:</span>
+                            <span className="text-gray-400">/posts/</span>
+                            <input
+                                type="text"
+                                value={post.slug || ''}
+                                onChange={(e) => setPost({ ...post, slug: slugify(e.target.value) })}
+                                className="bg-transparent border-none p-0 text-sm text-gray-500 focus:ring-0 w-full"
+                                placeholder="post-url-slug"
+                            />
+                        </div>
+
                         <textarea
                             placeholder="Write your story..."
                             rows={20}

@@ -14,6 +14,7 @@ export interface Blog {
     status: 'LIVE' | 'DRAFT' | 'MAINTENANCE'
     role: 'OWNER' | 'EDITOR' | 'ADMIN'
     createdAt?: string
+    postCount?: number
 }
 
 export const fetchBlogs = async (): Promise<Blog[]> => {
@@ -27,7 +28,7 @@ export const fetchBlogs = async (): Promise<Blog[]> => {
             ...b,
             icon: b.icon || 'article',
             color: b.color || 'bg-blue-100 text-blue-600',
-            posts: b.posts || 0,
+            posts: b.postCount || 0,
             visitors: b.visitors || '0',
             status: (b.status as any)?.toUpperCase() || 'DRAFT', // Normalize status to uppercase
             subdomain: b.slug || '' // Map slug to subdomain for UI compatibility if needed

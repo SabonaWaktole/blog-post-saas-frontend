@@ -48,7 +48,6 @@ function DashboardLayout() {
             {/* Main Content Area */}
             <main className="flex-1 flex flex-col overflow-y-auto">
                 <DashboardHeader
-                    title={getTitle()}
                     onMenuClick={() => setSidebarOpen(true)}
                 />
                 <div className="flex-1 p-4 lg:p-8 max-w-7xl mx-auto w-full">
