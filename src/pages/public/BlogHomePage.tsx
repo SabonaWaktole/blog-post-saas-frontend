@@ -2,9 +2,8 @@ import { Link } from 'react-router-dom'
 import { useState, useEffect, FormEvent } from 'react'
 
 import {
-    fetchArticles,
     fetchFeaturedArticle,
-    fetchArticlesByCategory,
+    fetchAllPublishedArticles,
     Article
 } from '../../data/articles'
 import { siteConfig } from '../../data/site'
@@ -22,17 +21,14 @@ function BlogHomePage() {
     const [email, setEmail] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
 
-    // In a real app, this would come from subdomain or config
-    // For this demo, we assume a default blog slug
-    const BLOG_SLUG = 'default-blog'
     const toast = useToast()
 
     useEffect(() => {
         const loadInitialData = async () => {
             setIsLoading(true)
             try {
-                // Fetch featured article
-                const featured = await fetchFeaturedArticle(BLOG_SLUG)
+                // Fetch featured article from global feed
+                const featured = await fetchFeaturedArticle()
                 setFeaturedArticle(featured)
 
                 // Note: Categories would typically be fetched here
@@ -51,18 +47,8 @@ function BlogHomePage() {
     useEffect(() => {
         const loadArticles = async () => {
             try {
-                let items: Article[] = [];
-                if (searchQuery.trim()) {
-                    items = await fetchArticles(BLOG_SLUG, searchQuery)
-                } else if (activeCategory !== 'All') {
-                    // We are passing category name as ID for now because we don't have IDs
-                    // This might not work if backend expects UUIDs.
-                    // If so, we'd need to map names to IDs.
-                    // For now, let's assume 'All' or search.
-                    items = await fetchArticlesByCategory(BLOG_SLUG, activeCategory)
-                } else {
-                    items = await fetchArticles(BLOG_SLUG)
-                }
+                // Use global feed fetcher
+                const items = await fetchAllPublishedArticles(searchQuery, activeCategory)
                 setDisplayedArticles(items)
             } catch (error) {
                 console.error('Failed to fetch articles:', error)

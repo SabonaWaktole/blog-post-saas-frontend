@@ -48,6 +48,20 @@ export const fetchArticles = async (blogSlug: string, query?: string): Promise<A
     }
 }
 
+export const fetchAllPublishedArticles = async (query?: string, categoryId?: string): Promise<Article[]> => {
+    try {
+        const params: Record<string, string> = {};
+        if (query) params.search = query;
+        if (categoryId && categoryId !== 'All') params.categoryId = categoryId;
+
+        const response = await apiClient.get<{ data: Article[] }>(`/public/posts`, params);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to fetch all published articles:', error);
+        return [];
+    }
+}
+
 export const fetchArticlesByCategory = async (blogSlug: string, categoryId?: string): Promise<Article[]> => {
     try {
         const params: Record<string, string> = {};
@@ -62,9 +76,11 @@ export const fetchArticlesByCategory = async (blogSlug: string, categoryId?: str
     }
 }
 
-export const fetchFeaturedArticle = async (blogSlug: string): Promise<Article | undefined> => {
+export const fetchFeaturedArticle = async (blogSlug?: string): Promise<Article | undefined> => {
     try {
-        const response = await apiClient.get<{ data: Article[] }>(`/public/blogs/${blogSlug}/posts`, { featured: true, limit: 1 });
+        // If blogSlug is provided, fetch from specific blog, otherwise fetch from global
+        const endpoint = blogSlug ? `/public/blogs/${blogSlug}/posts` : `/public/posts`;
+        const response = await apiClient.get<{ data: Article[] }>(endpoint, { featured: true, limit: 1 });
         return response.data[0];
     } catch (error) {
         console.error('Failed to fetch featured article:', error);

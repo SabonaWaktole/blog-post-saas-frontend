@@ -3,14 +3,15 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { MoreHorizontal, ArrowLeft } from 'lucide-react'
 import { Article, fetchArticleById, createPost, updatePost } from '../../data/articles'
 import { fetchCategories, Category } from '../../data/taxonomy'
-import { fetchBlogs } from '../../data/blogs'
+import { useBlog } from '../../context/BlogContext'
 
 export default function EditorPage() {
     const { postId } = useParams()
     const navigate = useNavigate()
+    const { currentBlog, isLoading: isBlogLoading } = useBlog()
+
     const [isLoading, setIsLoading] = useState(false)
     const [isSaving, setIsSaving] = useState(false)
-    const [blogId, setBlogId] = useState<string>('')
 
     const [post, setPost] = useState<Partial<Article>>({
         title: '',
@@ -24,25 +25,23 @@ export default function EditorPage() {
 
     useEffect(() => {
         const init = async () => {
+            if (isBlogLoading) return
+
+            if (!currentBlog) {
+                // No blog selected? Redirect to create blog or dashboard
+                navigate('/dashboard/blogs')
+                return
+            }
+
             setIsLoading(true)
             try {
-                // Get blog context first
-                const blogs = await fetchBlogs()
-                if (blogs.length === 0) {
-                    // No blogs? Redirect to create blog
-                    navigate('/dashboard/blogs')
-                    return
-                }
-                const currentBlogId = blogs[0].id
-                setBlogId(currentBlogId)
-
                 // Fetch categories
-                const cats = await fetchCategories(currentBlogId)
+                const cats = await fetchCategories(currentBlog.id)
                 setCategories(cats)
 
                 // If editing, fetch post
                 if (postId) {
-                    const article = await fetchArticleById(currentBlogId, postId)
+                    const article = await fetchArticleById(currentBlog.id, postId)
                     if (article) {
                         setPost(article)
                     } else {
@@ -57,17 +56,17 @@ export default function EditorPage() {
             }
         }
         init()
-    }, [postId, navigate])
+    }, [postId, navigate, currentBlog, isBlogLoading])
 
     const handleSave = async (status: 'DRAFT' | 'PUBLISHED' = 'DRAFT') => {
-        if (!blogId) return
+        if (!currentBlog) return
         setIsSaving(true)
         try {
             const dataToSave = { ...post, status }
             if (postId) {
-                await updatePost(blogId, postId, dataToSave)
+                await updatePost(currentBlog.id, postId, dataToSave)
             } else {
-                await createPost(blogId, dataToSave)
+                await createPost(currentBlog.id, dataToSave)
             }
             navigate('/dashboard/posts')
         } catch (error) {
