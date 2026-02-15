@@ -1,16 +1,15 @@
-
 import { apiClient } from '../api/client';
 
 export interface Author {
-    id: number
+    id: string
     name: string
     avatar: string | null
 }
 
-export type ArticleStatus = 'Published' | 'Draft' | 'Scheduled' | 'Archived'
+export type ArticleStatus = 'PUBLISHED' | 'DRAFT' | 'SCHEDULING' | 'ARCHIVED'
 
 export interface Article {
-    id: number
+    id: string
     slug: string
     title: string
     excerpt: string
@@ -25,16 +24,11 @@ export interface Article {
     tags: string[]
 }
 
-// NOTE: Static 'articles' array removed in favor of API calls.
+// --- Public Access ---
 
-export const fetchArticleBySlug = async (slug: string): Promise<Article | undefined> => {
+export const fetchArticleBySlug = async (blogSlug: string, slug: string): Promise<Article | undefined> => {
     try {
-        // Assuming API structure: GET /public/blogs/:blogSlug/posts/:postSlug
-        // Since we don't have multitenancy fully set up in frontend context yet,
-        // we might mock the blog slug or use a default one, or the API might be structured differently.
-        // Based on Documentation.md: GET /api/v1/public/blogs/:blogSlug/posts/:postSlug
-        // For now, let's assume a default blog or that the slug is unique globally for this demo.
-        const response = await apiClient.get<Article>(`/public/blogs/default-blog/posts/${slug}`);
+        const response = await apiClient.get<Article>(`/public/blogs/${blogSlug}/posts/${slug}`);
         return response;
     } catch (error) {
         console.error(`Failed to fetch article with slug ${slug}:`, error);
@@ -42,45 +36,35 @@ export const fetchArticleBySlug = async (slug: string): Promise<Article | undefi
     }
 }
 
-export const fetchArticleById = async (id: number): Promise<Article | undefined> => {
+export const fetchArticles = async (blogSlug: string, query?: string): Promise<Article[]> => {
     try {
-        // Assuming generic ID fetch or reusing slug logic if ID not supported directly publicily
-        // But likely an admin endpoint exists: GET /posts/:id
-        // Using a hypothetical endpoint
-        const response = await apiClient.get<Article>(`/posts/${id}`);
-        return response;
-    } catch (error) {
-        console.error(`Failed to fetch article with id ${id}:`, error);
-        return undefined;
-    }
-}
-
-export const fetchArticlesByCategory = async (category: string): Promise<Article[]> => {
-    try {
-        // If category is 'All', usually we just fetch all posts.
-        // Otherwise we pass categoryId or category slug.
-        // Documentation implies categoryId query param.
         const params: Record<string, string> = {};
-        if (category !== 'All') {
-            // Ideally we'd map name to ID, but let's pass it as is for now or assume backend handles names.
-            // Or we might need to fetch categories first to get IDs.
-            // For this step, I'll pass it as a query param 'category'.
-            params.category = category;
-        }
-
-        const response = await apiClient.get<{ data: Article[] }>(`public/blogs/default-blog/posts`, params);
+        if (query) params.search = query;
+        const response = await apiClient.get<{ data: Article[] }>(`/public/blogs/${blogSlug}/posts`, params);
         return response.data;
     } catch (error) {
-        console.error('Failed to fetch articles:', error);
+        console.error('Failed to search articles:', error);
         return [];
     }
 }
 
-export const fetchFeaturedArticle = async (): Promise<Article | undefined> => {
+export const fetchArticlesByCategory = async (blogSlug: string, categoryId?: string): Promise<Article[]> => {
     try {
-        // Maybe a specific endpoint or just fetch list and find one?
-        // Let's assume we fetch a list and take the first featured one or use a param `featured=true`
-        const response = await apiClient.get<{ data: Article[] }>(`public/blogs/default-blog/posts`, { featured: 'true', limit: 1 });
+        const params: Record<string, string> = {};
+        if (categoryId && categoryId !== 'All') {
+            params.categoryId = categoryId;
+        }
+        const response = await apiClient.get<{ data: Article[] }>(`/public/blogs/${blogSlug}/posts`, params);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to fetch articles by category:', error);
+        return [];
+    }
+}
+
+export const fetchFeaturedArticle = async (blogSlug: string): Promise<Article | undefined> => {
+    try {
+        const response = await apiClient.get<{ data: Article[] }>(`/public/blogs/${blogSlug}/posts`, { featured: true, limit: 1 });
         return response.data[0];
     } catch (error) {
         console.error('Failed to fetch featured article:', error);
@@ -88,7 +72,9 @@ export const fetchFeaturedArticle = async (): Promise<Article | undefined> => {
     }
 }
 
-export const fetchArticlesByAuthor = async (authorId: number): Promise<Article[]> => {
+// --- Author/Public Access ---
+
+export const fetchArticlesByAuthor = async (authorId: string): Promise<Article[]> => {
     try {
         const response = await apiClient.get<{ data: Article[] }>(`/authors/${authorId}/posts`);
         return response.data;
@@ -98,13 +84,55 @@ export const fetchArticlesByAuthor = async (authorId: number): Promise<Article[]
     }
 }
 
-export const fetchArticles = async (query: string): Promise<Article[]> => {
+// --- Dashboard/Management Access (Requires Auth) ---
+
+export const fetchArticlesByBlogId = async (blogId: string, query?: string): Promise<Article[]> => {
     try {
-        const response = await apiClient.get<{ data: Article[] }>(`public/blogs/default-blog/posts`, { search: query });
-        return response.data;
+        const params: Record<string, string> = {};
+        if (query) params.search = query;
+        // The backend `listByBlog` returns { data: Article[], meta: ... } or just data depending on implementation.
+        // PostController.listByBlog returns `result` which is from `postUseCases.listByBlog`.
+        // Usually paginated response. Let's assume it returns { data: [], meta: {} } structure or verify.
+        // Looking at backend `post.controller.ts` -> `res.json(result)`.
+        // `postUseCases.listByBlog` typically returns paginated result.
+        // For now, let's type it as { data: Article[] } and return .data, or fit to Article[] return type.
+        const response = await apiClient.get<{ data: Article[] }>(`/blogs/${blogId}/posts`, params);
+        return response.data || [];
     } catch (error) {
-        console.error('Failed to search articles:', error);
+        console.error('Failed to fetch articles for blog:', error);
         return [];
     }
 }
 
+export const fetchArticleById = async (blogId: string, postId: string): Promise<Article | undefined> => {
+    try {
+        // Backend hasn't explicitly documented GET /blogs/:blogId/posts/:postId but it's standard.
+        // Or we use the public one if acceptable, but draft posts require auth.
+        // Assuming GET /blogs/:blogId/posts/:postId exists for owners.
+        const response = await apiClient.get<Article>(`/blogs/${blogId}/posts/${postId}`);
+        return response;
+    } catch (error) {
+        console.error(`Failed to fetch article with id ${postId}:`, error);
+        return undefined;
+    }
+}
+
+export const createPost = async (blogId: string, data: Partial<Article>): Promise<Article> => {
+    try {
+        const response = await apiClient.post<Article>(`/blogs/${blogId}/posts`, data);
+        return response;
+    } catch (error) {
+        console.error('Failed to create post:', error);
+        throw error;
+    }
+}
+
+export const updatePost = async (blogId: string, postId: string, data: Partial<Article>): Promise<Article> => {
+    try {
+        const response = await apiClient.put<Article>(`/blogs/${blogId}/posts/${postId}`, data);
+        return response;
+    } catch (error) {
+        console.error('Failed to update post:', error);
+        throw error;
+    }
+}

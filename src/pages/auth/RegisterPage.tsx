@@ -1,29 +1,31 @@
-
 import { useState } from 'react'
-import { useNavigate, useLocation, Link } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 
-export default function LoginPage() {
+export default function RegisterPage() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
     const [isLoading, setIsLoading] = useState(false)
-    const { login } = useAuth()
+    const { register } = useAuth()
     const navigate = useNavigate()
-    const location = useLocation()
-
-    const from = location.state?.from?.pathname || '/dashboard'
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setError('')
+
+        if (password.length < 8) {
+            setError('Password must be at least 8 characters long')
+            return
+        }
+
         setIsLoading(true)
 
         try {
-            await login({ email, password })
-            navigate(from, { replace: true })
-        } catch (err) {
-            setError('Invalid email or password')
+            await register({ email, password })
+            navigate('/dashboard')
+        } catch (err: any) {
+            setError(err.message || 'Registration failed. Please try again.')
         } finally {
             setIsLoading(false)
         }
@@ -34,12 +36,12 @@ export default function LoginPage() {
             <div className="max-w-md w-full space-y-8">
                 <div>
                     <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
-                        Sign in to your account
+                        Create your account
                     </h2>
                     <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-                        Or{' '}
-                        <Link to="/register" className="font-medium text-primary hover:text-primary-dark">
-                            create a new account
+                        Already have an account?{' '}
+                        <Link to="/login" className="font-medium text-primary hover:text-primary-dark">
+                            Sign in
                         </Link>
                     </p>
                 </div>
@@ -69,10 +71,10 @@ export default function LoginPage() {
                                 id="password"
                                 name="password"
                                 type="password"
-                                autoComplete="current-password"
+                                autoComplete="new-password"
                                 required
                                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:placeholder-gray-400"
-                                placeholder="Password"
+                                placeholder="Password (min 8 characters)"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
@@ -91,7 +93,7 @@ export default function LoginPage() {
                             disabled={isLoading}
                             className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {isLoading ? 'Signing in...' : 'Sign in'}
+                            {isLoading ? 'Creating account...' : 'Create Account'}
                         </button>
                     </div>
                 </form>

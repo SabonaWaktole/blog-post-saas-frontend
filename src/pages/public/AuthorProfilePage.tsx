@@ -19,14 +19,13 @@ function AuthorProfilePage() {
 
     useEffect(() => {
         const loadAuthorData = async () => {
-            // Fallback to id 1 if not present or invalid
-            const id = authorId ? parseInt(authorId) : 1
+            if (!authorId) return
 
             try {
-                const foundAuthor = await fetchAuthorById(id)
+                const foundAuthor = await fetchAuthorById(authorId)
                 if (foundAuthor) {
                     setAuthor(foundAuthor)
-                    const related = await fetchArticlesByAuthor(id)
+                    const related = await fetchArticlesByAuthor(authorId)
                     setAuthorArticles(related)
                 } else {
                     toast.error('Author not found')
@@ -47,7 +46,8 @@ function AuthorProfilePage() {
             sorted = sorted.reverse()
         } else {
             // Chronological (assuming mock data is already sorted or sort by id desc)
-            sorted = sorted.sort((a, b) => b.id - a.id)
+            // String IDs might NOT sort numerically correctly if UUID, so use date
+            sorted = sorted.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
         }
 
         const start = (currentPage - 1) * ARTICLES_PER_PAGE
