@@ -1,3 +1,4 @@
 node_modules/*
 _legacy_html/*
 .env
+dist/*
