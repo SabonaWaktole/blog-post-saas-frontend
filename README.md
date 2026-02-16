@@ -2,6 +2,20 @@
 
 This is the frontend application for the Mindful CMS, built with React, TypeScript, and Vite.
 
+## Project Overview
+Mindful CMS is a modern, responsive content management system frontend designed to provide a seamless blogging experience. It features a robust dashboard for content creators, intuitive blog management tools, and a clean, engaging reader interface. The application is built with performance and user experience in mind, utilizing modern web technologies to ensure speed and accessibility.
+
+## Technology Stack
+The project leverages a modern tech stack to ensure scalability, maintainability, and performance:
+
+-   **Core Framework**: [React 18](https://react.dev/)
+-   **Language**: [TypeScript](https://www.typescriptlang.org/)
+-   **Build Tool**: [Vite](https://vitejs.dev/)
+-   **Routing**: [React Router DOM 6](https://reactrouter.com/)
+-   **Styling**: [Tailwind CSS](https://tailwindcss.com/), PostCSS, Autoprefixer
+-   **Icons**: [Lucide React](https://lucide.dev/)
+-   **Linting & Code Quality**: ESLint
+
 ## Application Screenshots
 
 Below is a walkthrough of the application's key pages and features.
