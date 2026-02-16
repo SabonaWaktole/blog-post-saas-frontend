@@ -16,6 +16,77 @@ The project leverages a modern tech stack to ensure scalability, maintainability
 -   **Icons**: [Lucide React](https://lucide.dev/)
 -   **Linting & Code Quality**: ESLint
 
+## Project Structure
+A quick look at the top-level files and directories you'll see in the project:
+
+```text
+src/
+├── api/          # API integration and service calls
+├── components/   # Reusable UI components
+├── context/      # React Context for global state management
+├── layouts/      # Page layout components (e.g., Dashboard, Public)
+├── pages/        # Application page views
+├── routes/       # Route definitions and configuration
+└── styles/       # Global styles and Tailwind configuration
+```
+
+## Getting Started
+
+Follow these steps to set up the project locally.
+
+### Prerequisites
+
+-   [Node.js](https://nodejs.org/) (Version 16 or higher recommended)
+-   npm (comes with Node.js)
+
+### Installation
+
+1.  **Clone the repository**
+
+    ```bash
+    git clone https://github.com/SabonaWaktole/blog-post-saas-frontend.git
+    cd blog-post-frontend
+    ```
+
+2.  **Install dependencies**
+
+    ```bash
+    npm install
+    ```
+
+3.  **Environment Setup**
+
+    Create a `.env` file in the root directory and configure your API URL:
+
+    ```bash
+    VITE_API_BASE_URL=http://localhost:3000/api/v1
+    ```
+
+4.  **Run the development server**
+
+    ```bash
+    npm run dev
+    ```
+
+    Open [http://localhost:5173](http://localhost:5173) with your browser to see the result.
+
+## Available Scripts
+
+In the project directory, you can run:
+
+-   `npm run dev`: Runs the app in the development mode.
+-   `npm run build`: Builds the app for production to the `dist` folder.
+-   `npm run lint`: Runs ESLint to check for code quality issues.
+-   `npm run preview`: Locally preview the production build.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License.
+
 ## Application Screenshots
 
 Below is a walkthrough of the application's key pages and features.
