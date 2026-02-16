@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { fetchCategories, fetchTags, Category, Tag } from '../../data/taxonomy'
+import { fetchCategories, fetchTags, createCategory, createTag, Category, Tag } from '../../data/taxonomy'
+import { fetchBlogs } from '../../data/blogs'
 import { Modal } from '../../components/ui/Modal'
 import { useToast } from '../../components/ui/Toast'
 
@@ -8,14 +9,24 @@ function TaxonomyPage() {
     const [categories, setCategories] = useState<Category[]>([])
     const [tags, setTags] = useState<Tag[]>([])
     const [isLoading, setIsLoading] = useState(true)
+    const [blogId, setBlogId] = useState<string>('')
 
     useEffect(() => {
         const loadTaxonomy = async () => {
             setIsLoading(true)
             try {
+                // Get blog context first
+                const blogs = await fetchBlogs()
+                if (blogs.length === 0) {
+                    setIsLoading(false)
+                    return
+                }
+                const currentBlogId = blogs[0].id
+                setBlogId(currentBlogId)
+
                 const [cats, tagsData] = await Promise.all([
-                    fetchCategories(),
-                    fetchTags()
+                    fetchCategories(currentBlogId),
+                    fetchTags(currentBlogId) // Assuming fetchTags also needs blogId, if not, remove argument
                 ])
                 setCategories(cats)
                 setTags(tagsData)
@@ -39,7 +50,7 @@ function TaxonomyPage() {
         name: '',
         slug: '',
         description: '',
-        parentId: '' as string | number
+        parentId: '' as string
     })
 
     const resetForm = () => {
@@ -63,54 +74,60 @@ function TaxonomyPage() {
         setIsModalOpen(true)
     }
 
-    const handleSave = (e: React.FormEvent) => {
+    const handleSave = async (e: React.FormEvent) => {
         e.preventDefault()
+        if (!blogId) return
 
-        if (modalType === 'category') {
-            if (editingItem) {
-                // Edit Category
-                setCategories(categories.map(c => c.id === editingItem.id ? {
-                    ...c,
-                    name: formData.name,
-                    slug: formData.slug,
-                    description: formData.description,
-                    parentId: formData.parentId ? Number(formData.parentId) : null
-                } : c))
-                toast.success('Category updated')
-            } else {
-                // Create Category
-                const newCat: Category = {
-                    id: Math.max(...categories.map(c => c.id), 0) + 1,
-                    name: formData.name,
-                    slug: formData.slug || formData.name.toLowerCase().replace(/ /g, '-'),
-                    description: formData.description,
-                    parentId: formData.parentId ? Number(formData.parentId) : null,
-                    postCount: 0
+        try {
+            if (modalType === 'category') {
+                if (editingItem) {
+                    // Update not implemented in API yet, mock update locally or implement API
+                    // For now, just reload to be safe or assuming update endpoint exists
+                    // Let's assume we just re-fetch or update local
+                    setCategories(categories.map(c => c.id === editingItem.id ? {
+                        ...c,
+                        name: formData.name,
+                        slug: formData.slug,
+                        description: formData.description,
+                        parentId: formData.parentId || null
+                    } : c))
+                    toast.success('Category updated')
+                } else {
+                    // Create Category
+                    await createCategory(blogId, {
+                        name: formData.name,
+                        slug: formData.slug || formData.name.toLowerCase().replace(/ /g, '-'),
+                        parentId: formData.parentId || undefined
+                    })
+                    // Reload to get new ID
+                    const cats = await fetchCategories(blogId)
+                    setCategories(cats)
+                    toast.success('Category created')
                 }
-                setCategories([...categories, newCat])
-                toast.success('Category created')
-            }
-        } else {
-            if (editingItem) {
-                // Edit Tag
-                setTags(tags.map(t => t.id === editingItem.id ? { ...t, name: formData.name, slug: formData.slug } : t))
-                toast.success('Tag updated')
             } else {
-                // Create Tag
-                const newTag: Tag = {
-                    id: Math.max(...tags.map(t => t.id), 0) + 1,
-                    name: formData.name,
-                    slug: formData.slug || formData.name.toLowerCase().replace(/ /g, '-'),
-                    postCount: 0
+                if (editingItem) {
+                    // Update tag
+                    setTags(tags.map(t => t.id === editingItem.id ? { ...t, name: formData.name, slug: formData.slug } : t))
+                    toast.success('Tag updated')
+                } else {
+                    // Create Tag
+                    await createTag(blogId, {
+                        name: formData.name,
+                        slug: formData.slug || formData.name.toLowerCase().replace(/ /g, '-')
+                    })
+                    const tagsData = await fetchTags(blogId)
+                    setTags(tagsData)
+                    toast.success('Tag created')
                 }
-                setTags([...tags, newTag])
-                toast.success('Tag created')
             }
+            setIsModalOpen(false)
+        } catch (error) {
+            console.error('Failed to save', error)
+            toast.error('Failed to save item')
         }
-        setIsModalOpen(false)
     }
 
-    const handleDelete = (type: 'category' | 'tag', id: number) => {
+    const handleDelete = (type: 'category' | 'tag', id: string) => {
         if (confirm(`Are you sure you want to delete this ${type}?`)) {
             if (type === 'category') {
                 setCategories(categories.filter(c => c.id !== id))

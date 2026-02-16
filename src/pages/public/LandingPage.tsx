@@ -48,7 +48,7 @@ function LandingPage() {
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 lg:mb-20">
                         <Link
-                            to="/dashboard"
+                            to="/auth/register"
                             className="w-full sm:w-auto bg-primary text-white text-base font-bold px-8 lg:px-10 py-4 rounded-xl hover:brightness-110 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
                         >
                             Start Writing Today
@@ -176,7 +176,7 @@ function LandingPage() {
                     {/* CTA after workflow */}
                     <div className="mt-20 lg:mt-32 text-center">
                         <Link
-                            to="/dashboard"
+                            to="/auth/register"
                             className="inline-flex items-center gap-2 bg-primary text-white text-base font-bold px-8 py-4 rounded-xl hover:brightness-110 transition-all shadow-lg hover:shadow-xl"
                         >
                             Get Started Now

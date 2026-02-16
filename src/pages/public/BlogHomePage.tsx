@@ -1,40 +1,40 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect, FormEvent } from 'react'
-import { useToast } from '../../components/ui/Toast'
+
 import {
-    fetchArticles,
     fetchFeaturedArticle,
-    fetchArticlesByCategory,
+    fetchAllPublishedArticles,
     Article
 } from '../../data/articles'
-import { fetchCategories } from '../../data/taxonomy'
 import { siteConfig } from '../../data/site'
+import { useToast } from '../../components/ui/Toast'
 
 function BlogHomePage() {
     const [activeCategory, setActiveCategory] = useState<string>('All')
     const [searchQuery, setSearchQuery] = useState<string>('')
     const [displayedArticles, setDisplayedArticles] = useState<Article[]>([])
     const [featuredArticle, setFeaturedArticle] = useState<Article | undefined>(undefined)
-    const [categoriesList, setCategoriesList] = useState<string[]>(['All'])
+    const [categoriesList] = useState<string[]>(['All'])
     const [isLoading, setIsLoading] = useState(true)
 
     // Newsletter state
     const [email, setEmail] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
+
     const toast = useToast()
 
     useEffect(() => {
         const loadInitialData = async () => {
             setIsLoading(true)
             try {
-                // Fetch categories
-                const cats = await fetchCategories()
-                const catNames = ['All', ...cats.map(c => c.name)]
-                setCategoriesList(catNames)
-
-                // Fetch featured article
+                // Fetch featured article from global feed
                 const featured = await fetchFeaturedArticle()
                 setFeaturedArticle(featured)
+
+                // Note: Categories would typically be fetched here
+                // but our current API requires blogId for categories.
+                // We'll skip it for this public view demo or hardcode common ones if needed.
+                // setCategoriesList(['All', ...fetchedCats.map(c => c.name)])
             } catch (error) {
                 console.error('Failed to load initial data:', error)
             } finally {
@@ -46,27 +46,15 @@ function BlogHomePage() {
 
     useEffect(() => {
         const loadArticles = async () => {
-            // If we are loading initial data, we might want to wait or just let this run.
-            // But 'activeCategory' and 'searchQuery' changes should trigger this.
-
             try {
-                let items: Article[] = [];
-                if (searchQuery.trim()) {
-                    items = await fetchArticles(searchQuery)
-                } else if (activeCategory !== 'All') {
-                    items = await fetchArticlesByCategory(activeCategory)
-                } else {
-                    // Default 'All' fetches all (or paginated)
-                    // Reusing fetchArticlesByCategory('All') which I implemented to return all
-                    items = await fetchArticlesByCategory('All')
-                }
+                // Use global feed fetcher
+                const items = await fetchAllPublishedArticles(searchQuery, activeCategory)
                 setDisplayedArticles(items)
             } catch (error) {
                 console.error('Failed to fetch articles:', error)
             }
         }
 
-        // Debounce search could be good, but for now direct call
         const timeoutId = setTimeout(() => {
             loadArticles()
         }, 300)
@@ -148,7 +136,7 @@ function BlogHomePage() {
                                 <div className="flex flex-col items-stretch justify-start rounded-xl overflow-hidden bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 shadow-sm lg:flex-row lg:items-stretch">
                                     <div
                                         className="w-full lg:w-3/5 bg-center bg-no-repeat aspect-video lg:aspect-auto bg-cover min-h-[200px] lg:min-h-[400px]"
-                                        style={{ backgroundImage: `url('${featuredArticle.image}')` }}
+                                        style={{ backgroundImage: `url('${featuredArticle.image || 'https://images.unsplash.com/photo-1518385732269-8260da7f7b5f'}')` }}
                                     />
                                     <div className="flex w-full lg:w-2/5 flex-col items-stretch justify-center gap-4 lg:gap-6 p-6 lg:p-12">
                                         <div className="flex items-center gap-2">
@@ -195,14 +183,14 @@ function BlogHomePage() {
                         </div>
 
                         {/* Article Grid */}
-                        {displayedArticles.length > 0 ? (
+                        {displayedArticles.filter(a => a.id !== featuredArticle?.id).length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 lg:gap-x-8 gap-y-8 lg:gap-y-12 mb-16 lg:mb-20">
-                                {displayedArticles.map((article) => (
+                                {displayedArticles.filter(a => a.id !== featuredArticle?.id).map((article) => (
                                     <Link key={article.id} to={`/blog/${article.slug}`} className="group flex flex-col gap-4 cursor-pointer">
                                         <div className="relative overflow-hidden rounded-lg aspect-[16/10]">
                                             <div
                                                 className="w-full h-full bg-center bg-no-repeat bg-cover transition-transform duration-500 group-hover:scale-105"
-                                                style={{ backgroundImage: `url('${article.image}')` }}
+                                                style={{ backgroundImage: `url('${article.image || 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc'}')` }}
                                             />
                                             <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest text-primary">
                                                 {article.category}

@@ -1,0 +1,63 @@
+# Mindful CMS Frontend
+
+This is the frontend application for the Mindful CMS, built with React, TypeScript, and Vite.
+
+## Application Screenshots
+
+Below is a walkthrough of the application's key pages and features.
+
+### 1. Landing Page / Home
+Overview of the blog platform, showcasing the value proposition and entry points.
+![Landing Page](./screenshots/page01.png)
+
+### 2. Blog List / Feed
+Display of the latest blog posts available for reading.
+![Blog List](./screenshots/page02.png)
+
+### 3. Article Detail
+Reading view for a single blog post, showing content, author, and engagement options.
+![Article Detail](./screenshots/page03.png)
+
+### 4. Author Profile
+Public profile page of a blog author, listing their bio and posts.
+![Author Profile](./screenshots/page04.png)
+
+### 5. Login
+User authentication screen for accessing the dashboard.
+![Login](./screenshots/page05.png)
+
+### 6. Register
+New user sign-up screen to create an account.
+![Register](./screenshots/page06.png)
+
+### 7. Dashboard Overview
+The main dashboard view after login, showing key metrics and statistics.
+![Dashboard Overview](./screenshots/page07.png)
+
+### 8. Content Management
+Interface for listing, searching, and managing blog posts.
+![Content Management](./screenshots/page08.png)
+
+### 9. Blog Management
+Screen for managing multiple blogs or tenants within the system.
+![Blog Management](./screenshots/page09.png)
+
+### 10. Taxonomy Management
+Tools for managing categories and tags to organize content.
+![Taxonomy Management](./screenshots/page10.png)
+
+### 11. Analytics
+Detailed performance analytics and insights for the blogs.
+![Analytics](./screenshots/page11.png)
+
+### 12. Editor (New Post)
+The rich text editor interface for creating a new blog post.
+![New Post Editor](./screenshots/page12.png)
+
+### 13. Editor (Edit Post)
+The editor interface pre-loaded with content for modifying an existing post.
+![Edit Post Editor](./screenshots/page13.png)
+
+### 14. Additional UI / Settings
+Miscellaneous or secondary UI elements (e.g., Settings, Modals, or Previews).
+![Miscellaneous](./screenshots/page14.png)

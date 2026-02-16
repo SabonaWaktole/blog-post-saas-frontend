@@ -71,7 +71,7 @@ function Navbar() {
                         </span>
                     </button>
 
-                    <Link to="/dashboard" className="text-sm font-bold px-6 py-2 hover:text-primary transition-colors dark:text-gray-200">
+                    <Link to="/login" className="text-sm font-bold px-6 py-2 hover:text-primary transition-colors dark:text-gray-200">
                         Login
                     </Link>
                     <Link to="/dashboard" className="bg-primary text-white text-sm font-bold px-6 py-2.5 rounded-lg hover:brightness-110 transition-all">

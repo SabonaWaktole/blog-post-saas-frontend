@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 
 const navItems = [
     { path: '/dashboard', icon: 'dashboard', label: 'Overview', filled: true },
@@ -18,6 +19,7 @@ interface DashboardSidebarProps {
 
 function DashboardSidebar({ onClose }: DashboardSidebarProps) {
     const location = useLocation()
+    const { user } = useAuth()
 
     const isActive = (path: string) => {
         if (path === '/dashboard') {
@@ -95,12 +97,17 @@ function DashboardSidebar({ onClose }: DashboardSidebarProps) {
                 {/* User Profile */}
                 <div className="flex items-center gap-3 pt-6 border-t border-gray-100 dark:border-gray-800">
                     <div
-                        className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-border-light"
-                        style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCbspBe8dhjfzw3h3k7Fv7ar0IdvJWYzaWKn8u1DxVnBR38OJML8mnPG7p99FnvQloU1_VsFjYbtix2T96pM308Kk4wOuy_6rTWY4M6eSPdx5GUeTpxtUzepLysJXkxHmVL8WLNeeyOGModpWnSb771HebCktTWhdWUxjDov6EKbW0qFoNGWmtWflVrjOHUTx_-bRjWbnC3hA-0F9BjBcRm_cJOEThrMEGkIRYyXwdMgA4rhbWO1e2vZM9Y0Rj1_KcT9ANr4Y9Ikk4')" }}
-                    />
+                        className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-border-light bg-gray-200 flex items-center justify-center text-gray-500 font-bold"
+                    >
+                        {user?.email?.[0].toUpperCase() || 'U'}
+                    </div>
                     <div className="flex flex-col min-w-0">
-                        <p className="text-charcoal dark:text-white text-xs font-bold truncate">Sarah Jenkins</p>
-                        <p className="text-muted-gray text-[10px] font-medium truncate">Editor-in-Chief</p>
+                        <p className="text-charcoal dark:text-white text-xs font-bold truncate">
+                            {user?.email || 'User'}
+                        </p>
+                        <p className="text-muted-gray text-[10px] font-medium truncate">
+                            {user?.role || 'Member'}
+                        </p>
                     </div>
                 </div>
             </div>

@@ -3,6 +3,10 @@ import { useState, useEffect } from 'react'
 import { useScrollProgress } from '../../hooks/useScrollProgress'
 import { useToast } from '../../components/ui/Toast'
 import { fetchArticleBySlug, fetchArticlesByCategory, Article } from '../../data/articles'
+import { likePost, bookmarkPost } from '../../data/interactions'
+
+// In a real app, this would come from subdomain or config
+const BLOG_SLUG = 'default-blog'
 
 function ArticleDetailPage() {
     const { slug } = useParams<{ slug: string }>()
@@ -15,6 +19,7 @@ function ArticleDetailPage() {
     const [isLiked, setIsLiked] = useState(false)
     const [isBookmarked, setIsBookmarked] = useState(false)
     const [isFollowing, setIsFollowing] = useState(false)
+    const [isActionLoading, setIsActionLoading] = useState(false)
 
     useEffect(() => {
         const loadArticle = async () => {
@@ -29,7 +34,7 @@ function ArticleDetailPage() {
                             // Since preview is local, we probably can't easily fetch 'related' from API based on category of preview.
                             // But we can try fetching matching category.
                             try {
-                                const related = (await fetchArticlesByCategory(parsedArticle.category))
+                                const related = (await fetchArticlesByCategory(BLOG_SLUG, parsedArticle.category))
                                     .slice(0, 3)
                                 setRelatedArticles(related)
                             } catch (e) {
@@ -43,11 +48,12 @@ function ArticleDetailPage() {
                     }
                 } else {
                     try {
-                        const foundArticle = await fetchArticleBySlug(slug)
+                        const foundArticle = await fetchArticleBySlug(BLOG_SLUG, slug)
                         if (foundArticle) {
                             setArticle(foundArticle)
                             // Get related articles (same category, excluding current)
-                            const related = (await fetchArticlesByCategory(foundArticle.category))
+                            // Note: We need to pass the BLOG_SLUG
+                            const related = (await fetchArticlesByCategory(BLOG_SLUG, foundArticle.category))
                                 .filter(a => a.id !== foundArticle.id)
                                 .slice(0, 3)
                             setRelatedArticles(related)
@@ -84,17 +90,53 @@ function ArticleDetailPage() {
         }
     }
 
-    const handleLike = () => {
-        setIsLiked(!isLiked)
-        if (!isLiked) toast.success('Added to your likes')
+    const checkAuth = () => {
+        const token = localStorage.getItem('token')
+        if (!token) {
+            toast.error('Please login to continue')
+            navigate('/login')
+            return false
+        }
+        return true
     }
 
-    const handleBookmark = () => {
-        setIsBookmarked(!isBookmarked)
-        if (!isBookmarked) toast.success('Article bookmarked')
+    const handleLike = async () => {
+        if (!checkAuth() || !article) return
+        if (isActionLoading) return
+        
+        setIsActionLoading(true)
+        try {
+            await likePost(article.id)
+            setIsLiked(!isLiked)
+            if (!isLiked) toast.success('Added to your likes')
+        } catch (error) {
+            console.error('Failed to like post', error)
+            toast.error('Failed to like post')
+        } finally {
+            setIsActionLoading(false)
+        }
+    }
+
+    const handleBookmark = async () => {
+        if (!checkAuth() || !article) return
+        if (isActionLoading) return
+
+        setIsActionLoading(true)
+        try {
+            await bookmarkPost(article.id)
+            setIsBookmarked(!isBookmarked)
+            if (!isBookmarked) toast.success('Article bookmarked')
+        } catch (error) {
+            console.error('Failed to bookmark post', error)
+            toast.error('Failed to bookmark post')
+        } finally {
+            setIsActionLoading(false)
+        }
     }
 
     const handleFollow = () => {
+        if (!checkAuth()) return
+
         setIsFollowing(!isFollowing)
         if (!isFollowing) {
             toast.success(`Following ${article?.author.name}`)
@@ -117,10 +159,10 @@ function ArticleDetailPage() {
 
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2 mr-4 border-r border-gray-200 dark:border-gray-700 pr-4">
-                            <button onClick={handleLike} className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${isLiked ? 'text-red-500' : 'text-gray-400'}`}>
+                            <button onClick={handleLike} disabled={isActionLoading} className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${isLiked ? 'text-red-500' : 'text-gray-400'}`}>
                                 <span className="material-symbols-outlined" style={{ fontVariationSettings: isLiked ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
                             </button>
-                            <button onClick={handleBookmark} className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${isBookmarked ? 'text-primary' : 'text-gray-400'}`}>
+                            <button onClick={handleBookmark} disabled={isActionLoading} className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${isBookmarked ? 'text-primary' : 'text-gray-400'}`}>
                                 <span className="material-symbols-outlined" style={{ fontVariationSettings: isBookmarked ? "'FILL' 1" : "'FILL' 0" }}>bookmark</span>
                             </button>
                             <button onClick={handleShare} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-400">
@@ -183,34 +225,8 @@ function ArticleDetailPage() {
                             </div>
                         )}
                     </div>
-                    <p className="lead">
-                        Minimalism is not merely the absence of clutter; it is the presence of intention. In a world screaming for attention, the quiet confidence of minimalist design stands apart.
-                    </p>
-                    <p>
-                        As we look toward the cities of tomorrow, architects are embracing the "Less is More" mantra—not as a stylistic choice, but as a survival mechanism. The cognitive load of modern urban living demands sanctuaries of silence.
-                    </p>
-                    <div className="my-16 border-l-4 border-primary pl-8 py-2">
-                        <span className="font-heading text-2xl font-light italic text-gray-700 dark:text-gray-300 block mb-4">
-                            "Design is not just what it looks like. Design is how it works."
-                        </span>
-                        <span className="text-sm font-bold uppercase tracking-widest text-primary">— Marcus Thorne, Lead Architect</span>
-                    </div>
-                    <h2>The Rise of Sustainable Simplicity</h2>
-                    <p>
-                        One of the most compelling aspects of this new wave is its link to sustainability. When we build with less, we consume less. The raw honesty of exposed concrete, the warmth of unpainted timber—these materials tell a story of resourcefulness.
-                    </p>
-                    <p>
-                        However, achieving simplicity is complex. It requires a mastery of proportion and light that ornamentation often disguises.
-                    </p>
-                    <h3>Key Principles to Watch</h3>
-                    <ul>
-                        <li>**Biophilic Integration**: Blending indoor and outdoor spaces seamlessly.</li>
-                        <li>**Adaptive Reuse**: Transforming old structures rather than demolishing them.</li>
-                        <li>**Smart Tech, Invisible Tech**: Technology that serves without being seen.</li>
-                    </ul>
-                    <p>
-                        The future isn't about flying cars; it's about walkable streets, breathable buildings, and spaces that allow the human spirit to expand.
-                    </p>
+                    {/* Render content as HTML or markdown? For now assumes raw text/html */}
+                    <div dangerouslySetInnerHTML={{ __html: article.content }} />
                 </article>
             </main>
 

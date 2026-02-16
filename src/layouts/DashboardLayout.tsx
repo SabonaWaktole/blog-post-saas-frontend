@@ -1,29 +1,10 @@
-import { Outlet, useLocation } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 import { useState } from 'react'
 import DashboardSidebar from '../components/navigation/DashboardSidebar'
 import DashboardHeader from '../components/navigation/DashboardHeader'
 
-const pageTitles: Record<string, string> = {
-    '/dashboard': 'Dashboard',
-    '/dashboard/posts': 'Content Library',
-    '/dashboard/posts/new': 'New Post',
-    '/dashboard/blogs': 'My Blogs',
-    '/dashboard/taxonomy': 'Taxonomy Management',
-    '/dashboard/analytics': 'Insights',
-    '/dashboard/settings': 'Settings',
-}
-
 function DashboardLayout() {
     const [sidebarOpen, setSidebarOpen] = useState(false)
-    const location = useLocation()
-
-    const getTitle = () => {
-        // Check for edit route
-        if (location.pathname.includes('/edit')) {
-            return 'Edit Post'
-        }
-        return pageTitles[location.pathname] || 'Dashboard'
-    }
 
     return (
         <div className="flex h-screen overflow-hidden bg-background-light dark:bg-background-dark text-charcoal dark:text-gray-100 antialiased">
@@ -48,7 +29,6 @@ function DashboardLayout() {
             {/* Main Content Area */}
             <main className="flex-1 flex flex-col overflow-y-auto">
                 <DashboardHeader
-                    title={getTitle()}
                     onMenuClick={() => setSidebarOpen(true)}
                 />
                 <div className="flex-1 p-4 lg:p-8 max-w-7xl mx-auto w-full">
